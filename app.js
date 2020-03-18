@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.use(new LocalStrategy(User.authenticate()));
 //to read the session and encoding, decoding the session
 //serializeUser & deserializeUser coming from passportLocalMongoose Method from user model
 passport.serializeUser(User.serializeUser());
@@ -67,6 +68,20 @@ app.post("/register", function(req, res){
             res.redirect("/secret");
         });
     });
+});
+
+//LOGIN ROUTES
+
+//render login form
+app.get("/login", function(req, res){
+    res.render("login");
+});
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/secret",
+    failureRedirect: "/login"
+}),function(req, res){
+    
 });
 
 
