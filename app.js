@@ -23,6 +23,7 @@ app.use(require("express-session")({
     resave: false
 }));
 
+app.use(bodyParser.urlencoded({extended:true}));
 
 //setting passport to work with application
 app.use(passport.initialize());
@@ -33,12 +34,39 @@ app.use(passport.session());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//====================================================================================================================
+// Routes
+
 app.get('/', function(req, res){    
     res.render("home");
 });
 
 app.get("/secret", function(req, res){  
     res.render("secret");
+});
+
+//Auth Routes
+
+//sign up form
+app.get("/register", function(req, res){
+    res.render("register");
+});
+
+//handle sin up
+app.post("/register", function(req, res){
+    // res.send("Register POST Route");
+
+    req.body.username
+    req.body.password
+    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
+        if(err) {
+            console.log(err);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/secret");
+        });
+    });
 });
 
 
